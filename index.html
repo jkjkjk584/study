@@ -2010,7 +2010,7 @@ body.edit-mode .rich-editor:not(.title-editor):hover{border-color:#b48a3c!import
 </style>
 
 <style id="supabase-cloud-ui-style">
-#btnCloudLogin.on{background:#e9f7ef!important;color:#145a32!important;border-color:#58d68d!important;}
+#btnCloudStatus{background:#f5f1e9!important;color:#26384d!important;border-color:#c9c2b4!important;cursor:default!important;}
 #btnCloudLoad:disabled,#btnCloudSave:disabled{opacity:.42!important;cursor:not-allowed!important;}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2033,7 +2033,7 @@ body.edit-mode .rich-editor:not(.title-editor):hover{border-color:#b48a3c!import
   <div class="tbtn-sep"></div>
   <div class="tbtn-group">
     <button class="tbtn" id="btnSave" title="저장">💾 저장</button>
-    <button class="tbtn" id="btnCloudLogin" title="Supabase 로그인">☁ 로그인</button>
+    <button class="tbtn" id="btnCloudStatus" title="로그인 없이 공용 DB에 저장됩니다" disabled>☁ DB 준비</button>
     <button class="tbtn" id="btnCloudLoad" title="클라우드에서 불러오기">☁ 불러오기</button>
     <button class="tbtn" id="btnCloudSave" title="클라우드에 저장">☁ 저장</button>
   </div>
@@ -2254,12 +2254,13 @@ var lastAutoBackupAt=0;
    publishable/anon key는 브라우저에 넣어도 되는 공개 키입니다. service_role key는 절대 넣지 마세요. */
 var SUPABASE_URL="https://lvbazzocazslebbxxubn.supabase.co";
 var SUPABASE_ANON_KEY="sb_publishable_PFvZLMW-ZOOSYUdVufp1YQ_UyvRs_td";
-var sb=null,cloudUser=null,cloudSaveTimer=null,cloudSaving=false;
+var CLOUD_DOC_KEY="main";
+var sb=null,cloudSaveTimer=null,cloudSaving=false,cloudActive=false;
 function cloudReady(){return !!(window.supabase&&SUPABASE_URL&&SUPABASE_ANON_KEY);}
-function cloudClient(){if(!sb&&cloudReady())sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);return sb;}
+function cloudClient(){if(!sb&&cloudReady())sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false}});return sb;}
 function packCloudState(){
   syncEditors();
-  return {D:D,titleSizes:titleSizes,globalTitleStyles:globalTitleStyles,study:study,exportedAt:new Date().toISOString(),appVersion:"taxbook-v3-cloud"};
+  return {D:D,titleSizes:titleSizes,globalTitleStyles:globalTitleStyles,study:study,exportedAt:new Date().toISOString(),appVersion:"taxbook-v3-public-cloud"};
 }
 function applyCloudState(pkg){
   if(!pkg||!Array.isArray(pkg.D)){showToast('클라우드 데이터 형식 오류');return false;}
@@ -2274,66 +2275,50 @@ function applyCloudState(pkg){
   return true;
 }
 function updateCloudButtons(){
-  var login=document.getElementById('btnCloudLogin'),load=document.getElementById('btnCloudLoad'),saveBtn=document.getElementById('btnCloudSave');
-  if(login){login.textContent=cloudUser?'☁ 로그아웃':'☁ 로그인';login.classList.toggle('on',!!cloudUser);}
-  if(load)load.disabled=!cloudUser;
-  if(saveBtn)saveBtn.disabled=!cloudUser;
+  var st=document.getElementById('btnCloudStatus'),load=document.getElementById('btnCloudLoad'),saveBtn=document.getElementById('btnCloudSave');
+  var ready=cloudReady();
+  if(st){st.textContent=ready?(cloudActive?'☁ DB 연결됨':'☁ DB 준비'):'☁ DB 설정필요';}
+  if(load)load.disabled=!ready;
+  if(saveBtn)saveBtn.disabled=!ready;
 }
 async function initCloudAuth(){
-  var client=cloudClient(); if(!client){updateCloudButtons();return;}
-  try{
-    var res=await client.auth.getUser();
-    cloudUser=res&&res.data?res.data.user:null;
-  }catch(e){cloudUser=null;}
   updateCloudButtons();
 }
 async function cloudLogin(){
-  var client=cloudClient(); if(!client){alert('Supabase 설정이 없습니다.');return;}
-  if(cloudUser){
-    await client.auth.signOut(); cloudUser=null; updateCloudButtons(); showToast('로그아웃되었습니다'); return;
-  }
-  var email=prompt('Supabase 로그인 이메일'); if(!email)return;
-  var password=prompt('비밀번호'); if(!password)return;
-  var res=await client.auth.signInWithPassword({email:email.trim(),password:password});
-  if(res.error){
-    if(confirm('로그인 실패: '+res.error.message+'\n\n계정이 없으면 새로 가입할까요?')){
-      var su=await client.auth.signUp({email:email.trim(),password:password});
-      if(su.error){alert('가입 실패: '+su.error.message);return;}
-      cloudUser=su.data.user||null;
-      showToast('가입 처리됨. 이메일 확인이 필요할 수 있습니다.');
-    }else{return;}
-  }else{cloudUser=res.data.user;showToast('클라우드 로그인 완료');}
+  cloudActive=true;
   updateCloudButtons();
+  showToast('로그인 없이 DB 저장 모드입니다');
 }
 async function cloudSave(manual){
-  var client=cloudClient(); if(!client)return;
-  if(!cloudUser){if(manual)showToast('먼저 클라우드 로그인');return;}
+  var client=cloudClient(); if(!client){alert('Supabase 설정이 없습니다.');return;}
   if(cloudSaving)return;
   cloudSaving=true;
   try{
     var payload=packCloudState();
-    var r=await client.from('taxbook_docs').upsert({user_id:cloudUser.id,title:'세법 단권화',data_json:payload,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+    var r=await client.from('taxbook_public_docs').upsert({doc_key:CLOUD_DOC_KEY,title:'세법 단권화',data_json:payload,updated_at:new Date().toISOString()},{onConflict:'doc_key'});
     if(r.error)throw r.error;
+    cloudActive=true;updateCloudButtons();
     if(manual)showToast('클라우드 저장 완료');
   }catch(e){console.error(e);if(manual)alert('클라우드 저장 실패: '+(e.message||e));}
   cloudSaving=false;
 }
 function scheduleCloudSave(){
-  if(!cloudUser)return;
+  if(!cloudActive)return;
   clearTimeout(cloudSaveTimer);
-  cloudSaveTimer=setTimeout(function(){cloudSave(false);},900);
+  cloudSaveTimer=setTimeout(function(){cloudSave(false);},1200);
 }
 async function cloudLoad(){
   var client=cloudClient(); if(!client){alert('Supabase 설정이 없습니다.');return;}
-  if(!cloudUser){showToast('먼저 클라우드 로그인');return;}
-  var r=await client.from('taxbook_docs').select('data_json,updated_at').eq('user_id',cloudUser.id).maybeSingle();
+  var r=await client.from('taxbook_public_docs').select('data_json,updated_at').eq('doc_key',CLOUD_DOC_KEY).maybeSingle();
   if(r.error){alert('클라우드 불러오기 실패: '+r.error.message);return;}
   if(!r.data){
+    cloudActive=true;updateCloudButtons();
     if(confirm('클라우드에 저장된 데이터가 없습니다. 현재 데이터를 클라우드에 저장할까요?'))cloudSave(true);
     return;
   }
-  if(confirm('클라우드 데이터로 현재 화면을 덮어쓸까요?\n현재 로컬 내용은 자동백업/JSON 백업 후 복원할 수 있습니다.')){
-    if(applyCloudState(r.data.data_json)){showToast('클라우드 불러오기 완료');}
+  if(confirm('클라우드 데이터로 현재 화면을 덮어쓸까요?
+현재 로컬 내용은 자동백업/JSON 백업 후 복원할 수 있습니다.')){
+    if(applyCloudState(r.data.data_json)){cloudActive=true;updateCloudButtons();showToast('클라우드 불러오기 완료');}
   }
 }
 
@@ -2843,26 +2828,34 @@ function exportCurrentHtml(){
 function appInit(){
   try{
     var hasEmbedded=(typeof EMBEDDED_STATE!=='undefined'&&EMBEDDED_STATE&&Array.isArray(EMBEDDED_STATE.D));
-    var embeddedId=hasEmbedded?String(EMBEDDED_STATE.exportedAt||'embedded'):'';
-    var markerKey=SKEY+'_embedded_state_id';
-    if(hasEmbedded&&localStorage.getItem(markerKey)!==embeddedId){
+    var s=localStorage.getItem(SKEY);
+    /* 기존 저장 데이터가 있으면, 새 HTML 파일에 포함된 EMBEDDED_STATE가 있어도 절대 덮어쓰지 않음.
+       이전 버전은 새 파일/새 embeddedId를 열 때 로컬 저장값이 초기 데이터로 밀릴 수 있었음. */
+    if(s){
+      D=JSON.parse(s);
+    }else if(hasEmbedded){
       D=JSON.parse(JSON.stringify(EMBEDDED_STATE.D));
       if(EMBEDDED_STATE.titleSizes)titleSizes=Object.assign({},TITLE_SIZE_DEFAULTS,EMBEDDED_STATE.titleSizes);
-      if(EMBEDDED_STATE.globalTitleStyles)globalTitleStyles=Object.assign({ch1:{},ch2:{},ch3:{}},EMBEDDED_STATE.globalTitleStyles);
+      if(EMBEDDED_STATE.globalTitleStyles)globalTitleStyles=Object.assign({ch1:{},ch2:{},ch3:{},ch4:{}},EMBEDDED_STATE.globalTitleStyles);
       if(EMBEDDED_STATE.study)study=Object.assign(study,EMBEDDED_STATE.study);
       localStorage.setItem(SKEY,JSON.stringify(D));
       saveTitleSizes();saveGlobalTitleStyles();saveStudy();
-      localStorage.setItem(markerKey,embeddedId);
     }else{
-      var s=localStorage.getItem(SKEY);
-      D=s?JSON.parse(s):(hasEmbedded?JSON.parse(JSON.stringify(EMBEDDED_STATE.D)):JSON.parse(JSON.stringify(DEF)));
+      D=JSON.parse(JSON.stringify(DEF));
     }
   }
   catch(e){D=JSON.parse(JSON.stringify(DEF));}
   loadTitleSizes();applyTitleSizes();loadGlobalTitleStyles();loadStudy();
   bindFmtBar();bindBatchTitleSizes();bindAll();bindStudyFeatures();build();updateEditModeUI();updateUndoBtn();initCloudAuth();
 }
-function save(){syncEditors();localStorage.setItem(SKEY,JSON.stringify(D));maybeAutoBackup();scheduleCloudSave();showToast("저장되었습니다");}
+function save(){
+  syncEditors();
+  localStorage.setItem(SKEY,JSON.stringify(D));
+  maybeAutoBackup();
+  /* 로그인 없는 개인용 버전: 일반 저장 버튼만 눌러도 DB 자동저장 예약 */
+  if(cloudReady()){cloudActive=true;updateCloudButtons();scheduleCloudSave();}
+  showToast("저장되었습니다");
+}
 function syncEditors(){
   document.querySelectorAll('.rich-editor').forEach(function(el){
     var fid=el.getAttribute('data-fid'),field=el.getAttribute('data-field'),
