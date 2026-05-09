@@ -2255,7 +2255,7 @@ var lastAutoBackupAt=0;
 var SUPABASE_URL="https://lvbazzocazslebbxxubn.supabase.co";
 var SUPABASE_ANON_KEY="sb_publishable_PFvZLMW-ZOOSYUdVufp1YQ_UyvRs_td";
 var CLOUD_DOC_KEY="main";
-var sb=null,cloudSaveTimer=null,cloudSaving=false,cloudActive=false;
+var sb=null,cloudSaveTimer=null,cloudSaving=false,cloudActive=true;
 function cloudReady(){return !!(window.supabase&&SUPABASE_URL&&SUPABASE_ANON_KEY);}
 function cloudClient(){if(!sb&&cloudReady())sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false}});return sb;}
 function packCloudState(){
@@ -2316,8 +2316,7 @@ async function cloudLoad(){
     if(confirm('클라우드에 저장된 데이터가 없습니다. 현재 데이터를 클라우드에 저장할까요?'))cloudSave(true);
     return;
   }
-  if(confirm('클라우드 데이터로 현재 화면을 덮어쓸까요?
-현재 로컬 내용은 자동백업/JSON 백업 후 복원할 수 있습니다.')){
+  if(confirm('클라우드 데이터로 현재 화면을 덮어쓸까요?\n현재 로컬 내용은 자동백업/JSON 백업 후 복원할 수 있습니다.')){
     if(applyCloudState(r.data.data_json)){cloudActive=true;updateCloudButtons();showToast('클라우드 불러오기 완료');}
   }
 }
