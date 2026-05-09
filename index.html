@@ -2321,6 +2321,29 @@ async function cloudLoad(){
   }
 }
 
+async function cloudAutoLoadOnStart(){
+  var client=cloudClient();
+  if(!client)return;
+  try{
+    var r=await client.from('taxbook_public_docs').select('data_json,updated_at').eq('doc_key',CLOUD_DOC_KEY).maybeSingle();
+    if(r.error)throw r.error;
+    if(r.data && r.data.data_json){
+      if(applyCloudState(r.data.data_json)){
+        cloudActive=true;
+        updateCloudButtons();
+        showToast('DB 데이터 자동 불러오기 완료');
+      }
+    }else{
+      cloudActive=true;
+      updateCloudButtons();
+      showToast('DB에 저장된 데이터가 없습니다. 먼저 ☁ 저장을 눌러주세요');
+    }
+  }catch(e){
+    console.error(e);
+    showToast('DB 자동 불러오기 실패');
+  }
+}
+
 function updateEditModeUI(){
   var fmt=document.getElementById('fmtBar');
   var eb=document.getElementById('btnEdit');
@@ -2846,6 +2869,8 @@ function appInit(){
   catch(e){D=JSON.parse(JSON.stringify(DEF));}
   loadTitleSizes();applyTitleSizes();loadGlobalTitleStyles();loadStudy();
   bindFmtBar();bindBatchTitleSizes();bindAll();bindStudyFeatures();build();updateEditModeUI();updateUndoBtn();initCloudAuth();
+  /* 개인용 공용 DB 버전: 페이지를 열면 DB 값을 자동으로 불러옵니다. */
+  setTimeout(function(){cloudAutoLoadOnStart();},500);
 }
 function save(){
   syncEditors();
