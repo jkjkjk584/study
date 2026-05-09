@@ -2371,6 +2371,110 @@ body.dark-mode .toc-body .toc-link:hover .toc-text{color:#fff!important;}
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<style id="detail-tone-layer-v8">
+/* v8: 본문 세부내용 톤 정리 — 단계별로 배경 밝기를 다르게 줌 */
+:root{
+  --v8-detail-paper:#fbfaf6;
+  --v8-detail-paper-2:#f7f4ed;
+  --v8-detail-paper-3:#f2ede3;
+  --v8-detail-line:#d8cebc;
+}
+
+/* 밝은 모드: 세부내용은 본문보다 살짝 연한 교재톤 */
+.detail-wrap{background:transparent!important;}
+.detail-item,
+.detail-item-edit{border-top-color:var(--v8-detail-line)!important;}
+.detail-item-hd,
+.detail-item-edit > div:first-child{background:linear-gradient(90deg,var(--v8-detail-paper-2),transparent)!important;border-radius:4px!important;padding-left:6px!important;}
+.detail-item-bd,
+.detail-editor{background:var(--v8-detail-paper)!important;}
+.detail-content{background:transparent!important;}
+.detail-wrap .detail-item:nth-of-type(3n+1) .detail-item-bd,
+.detail-wrap .detail-item-edit:nth-of-type(3n+1) .detail-editor{background:#fcfbf7!important;}
+.detail-wrap .detail-item:nth-of-type(3n+2) .detail-item-bd,
+.detail-wrap .detail-item-edit:nth-of-type(3n+2) .detail-editor{background:#f8f5ee!important;}
+.detail-wrap .detail-item:nth-of-type(3n) .detail-item-bd,
+.detail-wrap .detail-item-edit:nth-of-type(3n) .detail-editor{background:#f5f0e7!important;}
+
+/* 다크모드: 큰 단계 → 작은 단계로 내려갈수록 살짝 밝게 해서 구분 */
+body.dark-mode{
+  --v8-d-bg-0:#263143;   /* 전체 종이 */
+  --v8-d-bg-1:#2b374a;   /* 대주제 카드 */
+  --v8-d-bg-2:#303d51;   /* 절/소주제 */
+  --v8-d-bg-3:#35445a;   /* 요약 */
+  --v8-d-bg-4:#3b4a61;   /* 세부내용 기본 */
+  --v8-d-bg-5:#42526a;   /* 세부내용 강조 */
+  --v8-d-line:#64748b;
+  --v8-d-line-soft:#536276;
+  --v8-d-text:#edf4ff;
+  --v8-d-sub:#d7e2f0;
+}
+body.dark-mode #chapters,
+body.dark-mode .book::before,
+body.dark-mode .filter-bar{background:var(--v8-d-bg-0)!important;}
+body.dark-mode .ch1,
+body.dark-mode .ch1-bd{background:var(--v8-d-bg-1)!important;}
+body.dark-mode .ch1-hd{background:linear-gradient(90deg,#334056,var(--v8-d-bg-1))!important;}
+body.dark-mode .ch2-hd{background:linear-gradient(90deg,#37465d,var(--v8-d-bg-2))!important;}
+body.dark-mode .ch3,
+body.dark-mode .ch3-body,
+body.dark-mode .ch3-hd{background:var(--v8-d-bg-2)!important;}
+body.dark-mode .ch3-hd:hover{background:#36445a!important;}
+body.dark-mode .ch3-summary{background:var(--v8-d-bg-3)!important;border-left-color:#8fa4bf!important;color:var(--v8-d-sub)!important;}
+
+/* 세부내용: 본문보다 한 단계 밝고 부드럽게 */
+body.dark-mode .detail-wrap{background:transparent!important;}
+body.dark-mode .detail-item,
+body.dark-mode .detail-item-edit{background:transparent!important;border-top-color:var(--v8-d-line-soft)!important;}
+body.dark-mode .detail-item-hd,
+body.dark-mode .detail-item-edit > div:first-child{
+  background:linear-gradient(90deg,#40516a,rgba(64,81,106,.25))!important;
+  border-radius:5px!important;
+  padding-left:7px!important;
+}
+body.dark-mode .detail-item-bd,
+body.dark-mode .detail-editor{
+  background:var(--v8-d-bg-4)!important;
+  border-color:var(--v8-d-line)!important;
+  color:var(--v8-d-text)!important;
+}
+body.dark-mode .detail-content{color:var(--v8-d-text)!important;background:transparent!important;}
+body.dark-mode .detail-title,
+body.dark-mode .global-detail-title{color:#f2f7ff!important;}
+body.dark-mode .detail-num{color:#f0c96f!important;}
+
+/* 세부항목 순서별 톤 차이: 1→2→3 순환으로 구분 */
+body.dark-mode .detail-wrap .detail-item:nth-of-type(3n+1) .detail-item-bd,
+body.dark-mode .detail-wrap .detail-item-edit:nth-of-type(3n+1) .detail-editor{background:#3b4a61!important;}
+body.dark-mode .detail-wrap .detail-item:nth-of-type(3n+2) .detail-item-bd,
+body.dark-mode .detail-wrap .detail-item-edit:nth-of-type(3n+2) .detail-editor{background:#40516a!important;}
+body.dark-mode .detail-wrap .detail-item:nth-of-type(3n) .detail-item-bd,
+body.dark-mode .detail-wrap .detail-item-edit:nth-of-type(3n) .detail-editor{background:#455770!important;}
+body.dark-mode .detail-wrap .detail-item:nth-of-type(3n+1) .detail-item-hd,
+body.dark-mode .detail-wrap .detail-item-edit:nth-of-type(3n+1) > div:first-child{background:linear-gradient(90deg,#42536c,rgba(66,83,108,.24))!important;}
+body.dark-mode .detail-wrap .detail-item:nth-of-type(3n+2) .detail-item-hd,
+body.dark-mode .detail-wrap .detail-item-edit:nth-of-type(3n+2) > div:first-child{background:linear-gradient(90deg,#485a73,rgba(72,90,115,.24))!important;}
+body.dark-mode .detail-wrap .detail-item:nth-of-type(3n) .detail-item-hd,
+body.dark-mode .detail-wrap .detail-item-edit:nth-of-type(3n) > div:first-child{background:linear-gradient(90deg,#4d607a,rgba(77,96,122,.24))!important;}
+
+/* 세부내용 안쪽 목록도 배경에 묻히지 않게 */
+body.dark-mode .detail-content li,
+body.dark-mode .detail-editor li{color:#eef5ff!important;}
+body.dark-mode .detail-content ol li::before,
+body.dark-mode .detail-editor ol li::before{color:#f0c96f!important;}
+body.dark-mode .detail-content span:not([style*="color"]),
+body.dark-mode .detail-editor span:not([style*="color"]){color:inherit;}
+
+@media print{
+  .detail-item-hd,
+  .detail-item-edit > div:first-child,
+  .detail-item-bd,
+  .detail-editor{background:transparent!important;}
+}
+</style>
+
 </head>
 <body class="sidebar-on edit-mode format-active">
 <div class="scroll-progress"><div class="scroll-progress-fill" id="scrollProgressFill"></div></div>
@@ -7488,6 +7592,112 @@ button#fmtColorSwatch.fbar-color.color-swatch-btn.swatch-light{
     if(b){b.onclick=function(){var on=!document.body.classList.contains('dark-mode');saveDark(on);setDark(on);};}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+
+
+
+<style id="mobile-formatbar-persistent-v9">
+/* v9: 모바일 편집 중 스크롤/키보드 표시 후에도 글꼴·색상·형광펜 편집바가 사라지지 않도록 강제 고정 */
+@media(max-width:760px){
+  body.edit-mode:not(.read-mode) #fmtBar,
+  body.edit-mode:not(.read-mode) #fmtBar.visible,
+  body.edit-mode:not(.read-mode).format-active #fmtBar,
+  body.edit-mode:not(.read-mode).mobile-editing #fmtBar{
+    display:flex!important;
+    visibility:visible!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    top:auto!important;
+    bottom:var(--mobile-editor-bottom,0px)!important;
+    z-index:2147483000!important;
+    width:100vw!important;
+    height:auto!important;
+    min-height:50px!important;
+    max-height:44vh!important;
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+    flex-wrap:nowrap!important;
+    align-items:center!important;
+    gap:6px!important;
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom))!important;
+    margin:0!important;
+    border-top:2px solid var(--tb-gold,#b48a3c)!important;
+    border-bottom:0!important;
+    background:var(--tb-paper,#fffdf8)!important;
+    box-shadow:0 -8px 26px rgba(0,0,0,.25)!important;
+    -webkit-overflow-scrolling:touch!important;
+    transform:translateZ(0)!important;
+  }
+  body.dark-mode.edit-mode:not(.read-mode) #fmtBar{
+    background:#253044!important;
+    border-top-color:#d8b65c!important;
+    box-shadow:0 -8px 28px rgba(0,0,0,.38)!important;
+  }
+  body.edit-mode:not(.read-mode){
+    padding-bottom:calc(124px + var(--mobile-editor-bottom,0px))!important;
+  }
+  body.edit-mode:not(.read-mode) #fmtBar > *{flex:0 0 auto!important;}
+  body.edit-mode:not(.read-mode) #fmtBar .preset-colors{display:flex!important;width:auto!important;margin-top:0!important;}
+  body.edit-mode:not(.read-mode) #fmtBar .fbar-select{max-width:132px!important;}
+  body.edit-mode:not(.read-mode) #fmtBar .fbarbtn{min-width:32px!important;}
+  body.edit-mode:not(.read-mode) .color-pop{
+    position:fixed!important;
+    left:auto!important;
+    right:10px!important;
+    top:auto!important;
+    bottom:calc(66px + var(--mobile-editor-bottom,0px))!important;
+    transform:none!important;
+    z-index:2147483100!important;
+  }
+}
+</style>
+
+<script id="mobile-formatbar-persistent-v9-script">
+(function(){
+  function ready(fn){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fn); else fn(); }
+  ready(function(){
+    var fmt=document.getElementById('fmtBar');
+    if(!fmt) return;
+    function isMobile(){ return window.matchMedia && window.matchMedia('(max-width:760px)').matches; }
+    function isEditing(){ return document.body.classList.contains('edit-mode') && !document.body.classList.contains('read-mode'); }
+    function editable(el){ return !!(el && el.closest && el.closest('.rich-editor,[contenteditable="true"],textarea,input')); }
+    function updateKeyboardOffset(){
+      var off=0;
+      if(window.visualViewport){
+        off=Math.max(0, Math.round(window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop));
+      }
+      document.documentElement.style.setProperty('--mobile-editor-bottom', off+'px');
+    }
+    function forceShow(){
+      if(!isMobile() || !isEditing()) return;
+      document.body.classList.add('mobile-editing','format-active');
+      fmt.classList.add('visible');
+      fmt.setAttribute('aria-hidden','false');
+      fmt.style.setProperty('display','flex','important');
+      fmt.style.setProperty('visibility','visible','important');
+      fmt.style.setProperty('height','auto','important');
+      fmt.style.setProperty('opacity','1','important');
+      updateKeyboardOffset();
+    }
+    ['focusin','selectionchange','touchstart','touchmove','scroll','resize'].forEach(function(ev){
+      document.addEventListener(ev,function(e){
+        if(ev==='focusin' && !editable(e.target)) return;
+        if(ev==='selectionchange' && !editable(document.activeElement) && !document.body.classList.contains('format-active')) return;
+        forceShow();
+      },true);
+    });
+    if(window.visualViewport){
+      window.visualViewport.addEventListener('resize',forceShow);
+      window.visualViewport.addEventListener('scroll',forceShow);
+    }
+    new MutationObserver(function(){ forceShow(); }).observe(fmt,{attributes:true,attributeFilter:['class','style','aria-hidden']});
+    new MutationObserver(function(){ forceShow(); }).observe(document.body,{attributes:true,attributeFilter:['class']});
+    forceShow();
+  });
 })();
 </script>
 
