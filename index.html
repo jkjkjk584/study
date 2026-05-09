@@ -2008,6 +2008,12 @@ body.edit-mode .rich-editor:not(.title-editor):hover{border-color:#b48a3c!import
 .ch1-title,.ch2-title,.ch3-title-disp,.ch3-summary,.detail-title,.detail-content,.memo-area{white-space:pre-wrap!important;}
 .ch3-title-disp,.detail-content,.ch3-summary{word-break:break-word!important;}
 </style>
+
+<style id="supabase-cloud-ui-style">
+#btnCloudLogin.on{background:#e9f7ef!important;color:#145a32!important;border-color:#58d68d!important;}
+#btnCloudLoad:disabled,#btnCloudSave:disabled{opacity:.42!important;cursor:not-allowed!important;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="sidebar-on edit-mode format-active">
 <div class="scroll-progress"><div class="scroll-progress-fill" id="scrollProgressFill"></div></div>
@@ -2027,6 +2033,9 @@ body.edit-mode .rich-editor:not(.title-editor):hover{border-color:#b48a3c!import
   <div class="tbtn-sep"></div>
   <div class="tbtn-group">
     <button class="tbtn" id="btnSave" title="저장">💾 저장</button>
+    <button class="tbtn" id="btnCloudLogin" title="Supabase 로그인">☁ 로그인</button>
+    <button class="tbtn" id="btnCloudLoad" title="클라우드에서 불러오기">☁ 불러오기</button>
+    <button class="tbtn" id="btnCloudSave" title="클라우드에 저장">☁ 저장</button>
   </div>
   <div class="dd-wrap">
     <button class="tbtn dropdown-trigger" id="btnDataMenu" title="데이터 관리">▾ 데이터</button>
@@ -2240,6 +2249,93 @@ var study={search:"",quick:"all",cat:"",memory:false,sidebar:false,printTools:fa
 var STUDY_CATS=["","조문","판례","계산","기한","가산세","암기팁","함정"];
 var lastAutoBackupAt=0;
 
+/* ── Supabase 클라우드 저장 설정 ──
+   Project URL은 /rest/v1 없이 https://프로젝트.supabase.co 형식이어야 합니다.
+   publishable/anon key는 브라우저에 넣어도 되는 공개 키입니다. service_role key는 절대 넣지 마세요. */
+var SUPABASE_URL="https://lvbazzocazslebbxxubn.supabase.co";
+var SUPABASE_ANON_KEY="sb_publishable_PFvZLMW-ZOOSYUdVufp1YQ_UyvRs_td";
+var sb=null,cloudUser=null,cloudSaveTimer=null,cloudSaving=false;
+function cloudReady(){return !!(window.supabase&&SUPABASE_URL&&SUPABASE_ANON_KEY);}
+function cloudClient(){if(!sb&&cloudReady())sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);return sb;}
+function packCloudState(){
+  syncEditors();
+  return {D:D,titleSizes:titleSizes,globalTitleStyles:globalTitleStyles,study:study,exportedAt:new Date().toISOString(),appVersion:"taxbook-v3-cloud"};
+}
+function applyCloudState(pkg){
+  if(!pkg||!Array.isArray(pkg.D)){showToast('클라우드 데이터 형식 오류');return false;}
+  captureUndo(false);
+  D=JSON.parse(JSON.stringify(pkg.D));
+  titleSizes=Object.assign({},TITLE_SIZE_DEFAULTS,pkg.titleSizes||{});
+  globalTitleStyles=Object.assign({ch1:{},ch2:{},ch3:{},ch4:{}},pkg.globalTitleStyles||{});
+  study=Object.assign(study,pkg.study||{});
+  localStorage.setItem(SKEY,JSON.stringify(D));
+  saveTitleSizes();saveGlobalTitleStyles();saveStudy();
+  applyTitleSizes();applyGlobalTitleStyles();build();
+  return true;
+}
+function updateCloudButtons(){
+  var login=document.getElementById('btnCloudLogin'),load=document.getElementById('btnCloudLoad'),saveBtn=document.getElementById('btnCloudSave');
+  if(login){login.textContent=cloudUser?'☁ 로그아웃':'☁ 로그인';login.classList.toggle('on',!!cloudUser);}
+  if(load)load.disabled=!cloudUser;
+  if(saveBtn)saveBtn.disabled=!cloudUser;
+}
+async function initCloudAuth(){
+  var client=cloudClient(); if(!client){updateCloudButtons();return;}
+  try{
+    var res=await client.auth.getUser();
+    cloudUser=res&&res.data?res.data.user:null;
+  }catch(e){cloudUser=null;}
+  updateCloudButtons();
+}
+async function cloudLogin(){
+  var client=cloudClient(); if(!client){alert('Supabase 설정이 없습니다.');return;}
+  if(cloudUser){
+    await client.auth.signOut(); cloudUser=null; updateCloudButtons(); showToast('로그아웃되었습니다'); return;
+  }
+  var email=prompt('Supabase 로그인 이메일'); if(!email)return;
+  var password=prompt('비밀번호'); if(!password)return;
+  var res=await client.auth.signInWithPassword({email:email.trim(),password:password});
+  if(res.error){
+    if(confirm('로그인 실패: '+res.error.message+'\n\n계정이 없으면 새로 가입할까요?')){
+      var su=await client.auth.signUp({email:email.trim(),password:password});
+      if(su.error){alert('가입 실패: '+su.error.message);return;}
+      cloudUser=su.data.user||null;
+      showToast('가입 처리됨. 이메일 확인이 필요할 수 있습니다.');
+    }else{return;}
+  }else{cloudUser=res.data.user;showToast('클라우드 로그인 완료');}
+  updateCloudButtons();
+}
+async function cloudSave(manual){
+  var client=cloudClient(); if(!client)return;
+  if(!cloudUser){if(manual)showToast('먼저 클라우드 로그인');return;}
+  if(cloudSaving)return;
+  cloudSaving=true;
+  try{
+    var payload=packCloudState();
+    var r=await client.from('taxbook_docs').upsert({user_id:cloudUser.id,title:'세법 단권화',data_json:payload,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+    if(r.error)throw r.error;
+    if(manual)showToast('클라우드 저장 완료');
+  }catch(e){console.error(e);if(manual)alert('클라우드 저장 실패: '+(e.message||e));}
+  cloudSaving=false;
+}
+function scheduleCloudSave(){
+  if(!cloudUser)return;
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer=setTimeout(function(){cloudSave(false);},900);
+}
+async function cloudLoad(){
+  var client=cloudClient(); if(!client){alert('Supabase 설정이 없습니다.');return;}
+  if(!cloudUser){showToast('먼저 클라우드 로그인');return;}
+  var r=await client.from('taxbook_docs').select('data_json,updated_at').eq('user_id',cloudUser.id).maybeSingle();
+  if(r.error){alert('클라우드 불러오기 실패: '+r.error.message);return;}
+  if(!r.data){
+    if(confirm('클라우드에 저장된 데이터가 없습니다. 현재 데이터를 클라우드에 저장할까요?'))cloudSave(true);
+    return;
+  }
+  if(confirm('클라우드 데이터로 현재 화면을 덮어쓸까요?\n현재 로컬 내용은 자동백업/JSON 백업 후 복원할 수 있습니다.')){
+    if(applyCloudState(r.data.data_json)){showToast('클라우드 불러오기 완료');}
+  }
+}
 
 function updateEditModeUI(){
   var fmt=document.getElementById('fmtBar');
@@ -2764,9 +2860,9 @@ function appInit(){
   }
   catch(e){D=JSON.parse(JSON.stringify(DEF));}
   loadTitleSizes();applyTitleSizes();loadGlobalTitleStyles();loadStudy();
-  bindFmtBar();bindBatchTitleSizes();bindAll();bindStudyFeatures();build();updateEditModeUI();updateUndoBtn();
+  bindFmtBar();bindBatchTitleSizes();bindAll();bindStudyFeatures();build();updateEditModeUI();updateUndoBtn();initCloudAuth();
 }
-function save(){syncEditors();localStorage.setItem(SKEY,JSON.stringify(D));maybeAutoBackup();showToast("저장되었습니다");}
+function save(){syncEditors();localStorage.setItem(SKEY,JSON.stringify(D));maybeAutoBackup();scheduleCloudSave();showToast("저장되었습니다");}
 function syncEditors(){
   document.querySelectorAll('.rich-editor').forEach(function(el){
     var fid=el.getAttribute('data-fid'),field=el.getAttribute('data-field'),
@@ -3703,6 +3799,9 @@ function bindAll(){
     };
   }
   document.getElementById('btnSave').onclick=save;
+  var cLogin=document.getElementById('btnCloudLogin');if(cLogin)cLogin.onclick=cloudLogin;
+  var cLoad=document.getElementById('btnCloudLoad');if(cLoad)cLoad.onclick=cloudLoad;
+  var cSave=document.getElementById('btnCloudSave');if(cSave)cSave.onclick=function(){cloudSave(true);};
   var exHtml=document.getElementById('btnExportHtml');if(exHtml)exHtml.onclick=exportCurrentHtml;
   document.getElementById('btnUndo').onclick=function(){undoLast();};
   document.getElementById('btnRedo').onclick=function(){redoLast();};
