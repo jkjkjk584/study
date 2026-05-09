@@ -2013,6 +2013,363 @@ body.edit-mode .rich-editor:not(.title-editor):hover{border-color:#b48a3c!import
 #btnCloudStatus{background:#f5f1e9!important;color:#26384d!important;border-color:#c9c2b4!important;cursor:default!important;}
 #btnCloudLoad:disabled,#btnCloudSave:disabled{opacity:.42!important;cursor:not-allowed!important;}
 </style>
+
+
+<style id="dark-mode-toggle-style">
+/* 버튼 하나로 켜고 끄는 어두운 화면 모드 */
+body.dark-mode{
+  --tb-bg:#0f172a;
+  --tb-paper:#111827;
+  --tb-ink:#e5e7eb;
+  --tb-soft:#a7b0c0;
+  --tb-line:#334155;
+  --tb-line2:#263244;
+  --tb-navy:#050816;
+  --tb-blue:#9cc7ff;
+  --tb-gold:#d6a94f;
+  --tb-cream:#1b2435;
+  --tb-chip:#0b1220;
+  background:#0f172a!important;
+  color:#e5e7eb!important;
+}
+body.dark-mode .toolbar{background:#050816!important;border-bottom-color:#d6a94f!important;box-shadow:0 2px 14px rgba(0,0,0,.35)!important;}
+body.dark-mode .toolbar-title{color:#f8fafc!important;}
+body.dark-mode .tbtn{background:rgba(255,255,255,.08)!important;border-color:rgba(255,255,255,.22)!important;color:#e5e7eb!important;}
+body.dark-mode .tbtn:hover{background:rgba(255,255,255,.16)!important;}
+body.dark-mode .tbtn.on,body.dark-mode .tbtn.mode-on{background:#d6a94f!important;border-color:#d6a94f!important;color:#0f172a!important;}
+body.dark-mode .fmt-bar,
+body.dark-mode .study-panel,
+body.dark-mode .print-tools,
+body.dark-mode .modal,
+body.dark-mode .backup-modal,
+body.dark-mode .toolbar-dropdown,
+body.dark-mode .toc-sidebar{background:#111827!important;border-color:#334155!important;color:#e5e7eb!important;box-shadow:0 8px 24px rgba(0,0,0,.35)!important;}
+body.dark-mode .dd-item{background:#111827!important;color:#e5e7eb!important;border-color:#263244!important;}
+body.dark-mode .dd-item:hover{background:#1f2937!important;}
+body.dark-mode .book::before,
+body.dark-mode #chapters,
+body.dark-mode .filter-bar{background:#111827!important;border-color:#334155!important;color:#f8fafc!important;box-shadow:0 8px 24px rgba(0,0,0,.28)!important;}
+body.dark-mode .ch1-hd{background:transparent!important;border-bottom-color:#9cc7ff!important;}
+body.dark-mode .ch1-badge{background:#9cc7ff!important;color:#06101f!important;}
+body.dark-mode .ch1-title,
+body.dark-mode .ch1-title-input.title-editor{color:#f8fafc!important;}
+body.dark-mode .ch1-prog{background:#1f2937!important;border-color:#334155!important;color:#cbd5e1!important;}
+body.dark-mode .ch2-hd{background:#1b2435!important;border-color:#334155!important;border-left-color:#d6a94f!important;}
+body.dark-mode .ch2-title,
+body.dark-mode .ch2-title-input.title-editor{color:#bfdbfe!important;}
+body.dark-mode .ch2-badge,
+body.dark-mode .ch3-num{color:#f6c768!important;}
+body.dark-mode .ch3{border-bottom-color:#263244!important;}
+body.dark-mode .ch3-title-disp,
+body.dark-mode .ch3-title-input,
+body.dark-mode .ch3-title-input.title-editor{color:#e5e7eb!important;}
+body.dark-mode .ch3-summary{background:#182235!important;border-left-color:#53657c!important;color:#dbe4f0!important;}
+body.dark-mode .detail-item{border-top-color:#334155!important;}
+body.dark-mode .detail-title{color:#bfdbfe!important;}
+body.dark-mode .detail-content{color:#dbe4f0!important;}
+body.dark-mode .detail-item-bd{background:transparent!important;}
+body.dark-mode .rich-editor,
+body.dark-mode .detail-title-input,
+body.dark-mode .memo-area,
+body.dark-mode .study-search,
+body.dark-mode .study-select,
+body.dark-mode .study-btn,
+body.dark-mode .fbarbtn,
+body.dark-mode .fbar-select,
+body.dark-mode .tsel,
+body.dark-mode .wbtn,
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select{background:#0b1220!important;border-color:#475569!important;color:#e5e7eb!important;}
+body.dark-mode .rich-editor:focus,
+body.dark-mode .memo-area:focus,
+body.dark-mode .study-search:focus{border-color:#d6a94f!important;box-shadow:0 0 0 2px rgba(214,169,79,.20)!important;}
+body.dark-mode .fbtn,
+body.dark-mode .print-chip,
+body.dark-mode .addbtn,
+body.dark-mode .add-detail-btn{background:#0b1220!important;border-color:#475569!important;color:#cbd5e1!important;}
+body.dark-mode .fbtn.on,
+body.dark-mode .print-chip.on{background:#d6a94f!important;border-color:#d6a94f!important;color:#0f172a!important;}
+body.dark-mode .toc-head{background:#1b2435!important;color:#bfdbfe!important;border-bottom-color:#d6a94f!important;}
+body.dark-mode .toc-link{color:#cbd5e1!important;border-bottom-color:#263244!important;}
+body.dark-mode .toc-link:hover{background:#1f2937!important;color:#f8fafc!important;}
+body.dark-mode .toc-link.active{background:#26384d!important;color:#fff!important;}
+body.dark-mode .cat-badge,
+body.dark-mode .modified-badge{background:#0b1220!important;border-color:#475569!important;color:#cbd5e1!important;}
+body.dark-mode .toast{background:#d6a94f!important;color:#0f172a!important;}
+body.dark-mode .backup-row{background:#111827!important;border-color:#334155!important;}
+body.dark-mode .backup-row-title{color:#e5e7eb!important;}
+body.dark-mode .backup-row-meta,
+body.dark-mode .stats-bar,
+body.dark-mode .study-count{color:#a7b0c0!important;}
+body.dark-mode .color-pop{background:#111827!important;border-color:#334155!important;color:#e5e7eb!important;}
+@media print{body.dark-mode{background:#fff!important;color:#222!important;}}
+</style>
+
+
+
+<style id="dark-mode-soft-complete-fix">
+/* v6: 다크모드 색을 덜 진하게 조정하고, 목차/본문 카드/편집 영역까지 빠짐없이 적용 */
+body.dark-mode{
+  --tb-bg:#1f2937;
+  --tb-paper:#253044;
+  --tb-ink:#e8eef7;
+  --tb-soft:#b9c3d2;
+  --tb-line:#4b5b72;
+  --tb-line2:#3d4b60;
+  --tb-navy:#1b2433;
+  --tb-blue:#9fc5f8;
+  --tb-gold:#e2bd63;
+  --tb-cream:#303b50;
+  --tb-chip:#2b374b;
+  background:#1f2937!important;
+  color:#e8eef7!important;
+}
+body.dark-mode .toolbar{background:#1b2433!important;border-bottom-color:#e2bd63!important;box-shadow:0 2px 10px rgba(0,0,0,.22)!important;}
+body.dark-mode .toolbar-title{color:#f7f9fc!important;}
+body.dark-mode .tbtn{background:#273348!important;border-color:#526278!important;color:#e7edf6!important;}
+body.dark-mode .tbtn:hover{background:#334159!important;}
+body.dark-mode .tbtn.on,
+body.dark-mode .tbtn.mode-on,
+body.dark-mode #btnDarkMode.on{background:#e2bd63!important;border-color:#e2bd63!important;color:#1b2433!important;}
+
+body.dark-mode .stats-bar,
+body.dark-mode .study-panel,
+body.dark-mode .print-tools,
+body.dark-mode .fmt-bar,
+body.dark-mode .modal,
+body.dark-mode .backup-modal,
+body.dark-mode .toolbar-dropdown{background:#253044!important;border-color:#4b5b72!important;color:#dce5f1!important;box-shadow:0 6px 18px rgba(0,0,0,.18)!important;}
+body.dark-mode .book::before,
+body.dark-mode #chapters,
+body.dark-mode .filter-bar{background:#253044!important;border-color:#4b5b72!important;color:#f7f9fc!important;box-shadow:0 6px 18px rgba(0,0,0,.16)!important;}
+
+/* 목차 패널 전체 */
+body.dark-mode .toc-sidebar,
+body.dark-mode .toc-body,
+body.dark-mode #tocBody{background:#253044!important;border-color:#4b5b72!important;color:#e8eef7!important;}
+body.dark-mode .toc-head{background:#303b50!important;color:#e8eef7!important;border-bottom-color:#e2bd63!important;}
+body.dark-mode .toc-close{color:#c9d3e2!important;}
+body.dark-mode .toc-link{background:#2b374b!important;border-color:#526278!important;color:#e8eef7!important;box-shadow:none!important;}
+body.dark-mode .toc-link.toc-l1,
+body.dark-mode .toc-link.toc-l2,
+body.dark-mode .toc-link.toc-l3,
+body.dark-mode .toc-link.toc-l4{background:#2b374b!important;color:#e8eef7!important;border-color:#526278!important;}
+body.dark-mode .toc-link.toc-l1{border-left-color:#8fb8ef!important;}
+body.dark-mode .toc-link.toc-l2{border-left-color:#a8c58e!important;}
+body.dark-mode .toc-link.toc-l3{border-left-color:#d7ad6a!important;}
+body.dark-mode .toc-link.toc-l4{border-left-color:#bca7df!important;}
+body.dark-mode .toc-link .toc-mark{color:#e2bd63!important;}
+body.dark-mode .toc-link .toc-text,
+body.dark-mode .toc-l4 .toc-text{color:#e8eef7!important;}
+body.dark-mode .toc-link:hover,
+body.dark-mode .toc-link.toc-active{background:#35445b!important;color:#fff!important;}
+
+/* 본문 카드/챕터 영역 */
+body.dark-mode .ch1,
+body.dark-mode .ch1-bd,
+body.dark-mode .ch2-bd,
+body.dark-mode .ch3,
+body.dark-mode .ch3-body,
+body.dark-mode .detail-wrap,
+body.dark-mode .detail-item,
+body.dark-mode .detail-item-edit,
+body.dark-mode .detail-item-bd{background:#253044!important;color:#e8eef7!important;border-color:#4b5b72!important;}
+body.dark-mode .ch1-hd{background:#303b50!important;border-bottom-color:#8fb8ef!important;}
+body.dark-mode .ch1-hd:hover{background:#35445b!important;}
+body.dark-mode .ch1-badge{background:#8fb8ef!important;color:#172033!important;}
+body.dark-mode .ch1-title,
+body.dark-mode .ch1-title-input.title-editor{color:#f8fbff!important;}
+body.dark-mode .ch1-prog{background:#2b374b!important;border-color:#526278!important;color:#dce5f1!important;}
+body.dark-mode .ch2-hd{background:#303b50!important;border-color:#526278!important;border-left-color:#e2bd63!important;color:#e8eef7!important;}
+body.dark-mode .ch2-hd:hover{background:#35445b!important;}
+body.dark-mode .ch2-title,
+body.dark-mode .ch2-title-input.title-editor{color:#d8e9ff!important;}
+body.dark-mode .ch3{border-bottom-color:#4b5b72!important;}
+body.dark-mode .ch3-hd{background:#253044!important;color:#e8eef7!important;}
+body.dark-mode .ch3-hd:hover{background:#2b374b!important;}
+body.dark-mode .ch3-title-disp,
+body.dark-mode .ch3-title-input,
+body.dark-mode .ch3-title-input.title-editor{color:#f1f5fb!important;}
+body.dark-mode .ch3-num,
+body.dark-mode .detail-num,
+body.dark-mode .ch2-badge{color:#e2bd63!important;}
+body.dark-mode .ch3-summary{background:#2b374b!important;border-left-color:#71839c!important;color:#e4ebf5!important;}
+body.dark-mode .detail-title,
+body.dark-mode .global-detail-title{color:#d8e9ff!important;}
+body.dark-mode .detail-content{color:#e4ebf5!important;}
+body.dark-mode .detail-item{border-top-color:#526278!important;}
+body.dark-mode .wdot{color:#c2cad6!important;}
+
+/* 편집기/입력류 */
+body.dark-mode .rich-editor,
+body.dark-mode .summary-editor,
+body.dark-mode .detail-editor,
+body.dark-mode .detail-title-input,
+body.dark-mode .memo-area,
+body.dark-mode .study-search,
+body.dark-mode .study-select,
+body.dark-mode .study-btn,
+body.dark-mode .fbarbtn,
+body.dark-mode .fbar-select,
+body.dark-mode .tsel,
+body.dark-mode .cat-select,
+body.dark-mode .wbtn,
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select{background:#2b374b!important;border-color:#5a6b82!important;color:#eef4fb!important;}
+body.dark-mode .rich-editor:focus,
+body.dark-mode .memo-area:focus,
+body.dark-mode .study-search:focus,
+body.dark-mode input:focus,
+body.dark-mode textarea:focus{border-color:#e2bd63!important;box-shadow:0 0 0 2px rgba(226,189,99,.22)!important;}
+body.dark-mode .rich-editor::placeholder,
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder{color:#aeb8c7!important;}
+
+/* 버튼/태그/상태표시 */
+body.dark-mode .fbtn,
+body.dark-mode .print-chip,
+body.dark-mode .addbtn,
+body.dark-mode .add-detail-btn,
+body.dark-mode .dd-item{background:#2b374b!important;border-color:#5a6b82!important;color:#dce5f1!important;}
+body.dark-mode .fbtn.on,
+body.dark-mode .print-chip.on{background:#e2bd63!important;border-color:#e2bd63!important;color:#1b2433!important;}
+body.dark-mode .itag,
+body.dark-mode .cat-badge,
+body.dark-mode .modified-badge{border-color:#5a6b82!important;}
+body.dark-mode .ti{background:#51343a!important;color:#ffd4cf!important;}
+body.dark-mode .tm{background:#4b3f2b!important;color:#f6dca2!important;}
+body.dark-mode .to{background:#30493b!important;color:#c7f2d6!important;}
+body.dark-mode .cat-badge,
+body.dark-mode .modified-badge{background:#2b374b!important;color:#dce5f1!important;}
+body.dark-mode .star-btn{color:#e2bd63!important;}
+body.dark-mode .toast{background:#e2bd63!important;color:#1b2433!important;}
+body.dark-mode .color-pop{background:#253044!important;border-color:#4b5b72!important;color:#e8eef7!important;}
+
+/* 브라우저 스크롤바도 너무 까맣지 않게 */
+body.dark-mode *{scrollbar-color:#65758b #253044;}
+@media print{body.dark-mode{background:#fff!important;color:#222!important;}}
+</style>
+
+
+
+<style id="dark-toc-and-mobile-editor-fix-v7">
+/* v7: 다크모드 목차 항목의 흰/원색 배경까지 어두운 톤으로 통일 */
+body.dark-mode #tocBody .toc-major-0, body.dark-mode .toc-body .toc-major-0{--toc-base:#9fc5f8!important;--toc-mid:#79aef2!important;--toc-soft:#263a55!important;--toc-softer:#223147!important;--toc-line:#5c7fa8!important;--toc-lite:#4d6b92!important;}
+body.dark-mode #tocBody .toc-major-1, body.dark-mode .toc-body .toc-major-1{--toc-base:#91d6ad!important;--toc-mid:#74c99a!important;--toc-soft:#243f37!important;--toc-softer:#20352f!important;--toc-line:#5f9778!important;--toc-lite:#4f8069!important;}
+body.dark-mode #tocBody .toc-major-2, body.dark-mode .toc-body .toc-major-2{--toc-base:#f0b37b!important;--toc-mid:#e69a57!important;--toc-soft:#463629!important;--toc-softer:#3a3028!important;--toc-line:#a8754f!important;--toc-lite:#8f6246!important;}
+body.dark-mode #tocBody .toc-major-3, body.dark-mode .toc-body .toc-major-3{--toc-base:#c5b4f4!important;--toc-mid:#aa91ea!important;--toc-soft:#37314f!important;--toc-softer:#302c43!important;--toc-line:#7d6eac!important;--toc-lite:#6b5f92!important;}
+body.dark-mode #tocBody .toc-major-4, body.dark-mode .toc-body .toc-major-4{--toc-base:#f1a9b6!important;--toc-mid:#e9889a!important;--toc-soft:#49303a!important;--toc-softer:#3d2b33!important;--toc-line:#a86b78!important;--toc-lite:#8c5965!important;}
+body.dark-mode #tocBody .toc-major-5, body.dark-mode .toc-body .toc-major-5{--toc-base:#d1d9e6!important;--toc-mid:#b7c2d2!important;--toc-soft:#303b4d!important;--toc-softer:#293446!important;--toc-line:#6d7b8f!important;--toc-lite:#5b687b!important;}
+body.dark-mode #tocBody .toc-link,
+body.dark-mode .toc-body .toc-link,
+body.dark-mode #tocBody .toc-link.toc-l1,
+body.dark-mode #tocBody .toc-link.toc-l2,
+body.dark-mode #tocBody .toc-link.toc-l3,
+body.dark-mode #tocBody .toc-link.toc-l4,
+body.dark-mode .toc-body .toc-link.toc-l1,
+body.dark-mode .toc-body .toc-link.toc-l2,
+body.dark-mode .toc-body .toc-link.toc-l3,
+body.dark-mode .toc-body .toc-link.toc-l4{
+  background:linear-gradient(90deg,var(--toc-soft,#2b374b),var(--toc-softer,#253044))!important;
+  border-color:var(--toc-line,#526278)!important;
+  color:#e8eef7!important;
+  box-shadow:none!important;
+}
+body.dark-mode #tocBody .toc-link .toc-mark,
+body.dark-mode .toc-body .toc-link .toc-mark{color:var(--toc-base,#e2bd63)!important;opacity:1!important;}
+body.dark-mode #tocBody .toc-link .toc-text,
+body.dark-mode .toc-body .toc-link .toc-text,
+body.dark-mode #tocBody .toc-l4 .toc-text,
+body.dark-mode .toc-body .toc-l4 .toc-text{color:#e8eef7!important;opacity:1!important;}
+body.dark-mode #tocBody .toc-link:hover,
+body.dark-mode .toc-body .toc-link:hover,
+body.dark-mode #tocBody .toc-link.toc-active,
+body.dark-mode .toc-body .toc-link.toc-active{
+  background:linear-gradient(90deg,color-mix(in srgb,var(--toc-soft,#2b374b) 75%,#ffffff 8%),#35445b)!important;
+  color:#fff!important;
+}
+body.dark-mode #tocBody .toc-link:hover .toc-text,
+body.dark-mode .toc-body .toc-link:hover .toc-text{color:#fff!important;}
+
+/* 모바일: 키보드가 올라와도 글꼴/색상 편집바가 사라지지 않도록 하단 고정 편집 도크로 전환 */
+@media(max-width:760px){
+  body.edit-mode.format-active #fmtBar.visible,
+  body.edit-mode.mobile-editing #fmtBar.visible{
+    display:flex!important;
+    visibility:visible!important;
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    top:auto!important;
+    z-index:10050!important;
+    width:100vw!important;
+    height:auto!important;
+    max-height:42vh!important;
+    min-height:46px!important;
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+    flex-wrap:nowrap!important;
+    align-items:center!important;
+    gap:6px!important;
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom))!important;
+    border-top:2px solid var(--tb-gold,#b48a3c)!important;
+    border-bottom:0!important;
+    box-shadow:0 -8px 24px rgba(0,0,0,.22)!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  body.edit-mode.mobile-editing{padding-bottom:112px!important;}
+  #fmtBar > *{flex:0 0 auto!important;}
+  #fmtBar .preset-colors{display:flex!important;width:auto!important;margin-top:0!important;}
+  #fmtBar .fbar-select{max-width:130px!important;}
+  #fmtBar .fbarbtn{min-width:32px!important;}
+  body.edit-mode.mobile-editing .color-pop{
+    position:fixed!important;
+    left:auto!important;
+    right:10px!important;
+    top:auto!important;
+    bottom:64px!important;
+    transform:none!important;
+    z-index:10080!important;
+  }
+}
+</style>
+
+<script id="mobile-editor-formatbar-keepalive-v7">
+(function(){
+  function ready(fn){ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fn); else fn(); }
+  ready(function(){
+    var fmt=document.getElementById('fmtBar');
+    function editableTarget(el){
+      if(!el) return null;
+      if(el.closest){
+        return el.closest('.rich-editor,[contenteditable="true"],textarea,input');
+      }
+      return null;
+    }
+    document.addEventListener('focusin',function(e){
+      var ed=editableTarget(e.target);
+      if(!ed) return;
+      document.body.classList.add('mobile-editing','format-active');
+      if(fmt){
+        fmt.classList.add('visible');
+        fmt.setAttribute('aria-hidden','false');
+        fmt.style.display='';
+        fmt.style.visibility='';
+        fmt.style.height='';
+      }
+    },true);
+    document.addEventListener('focusout',function(){
+      setTimeout(function(){
+        if(!editableTarget(document.activeElement)) document.body.classList.remove('mobile-editing');
+      },250);
+    },true);
+  });
+})();
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="sidebar-on edit-mode format-active">
@@ -2048,6 +2405,7 @@ body.edit-mode .rich-editor:not(.title-editor):hover{border-color:#b48a3c!import
   </div>
   <div class="tbtn-sep"></div>
   <button class="tbtn" id="btnWord">📄 워드출력</button>
+  <button class="tbtn" id="btnDarkMode" title="어두운 화면으로 전환">🌙 어둡게</button>
   <div class="tbtn-sep"></div>
   <button class="tbtn on" id="btnSidebar">☰ 목차</button>
   <button class="tbtn" id="btnMemory">🧠 암기</button>
@@ -7108,4 +7466,29 @@ button#fmtColorSwatch.fbar-color.color-swatch-btn.swatch-light{
   });
 })();
 </script>
+
+
+<script id="dark-mode-toggle-script">
+(function(){
+  var DARK_KEY='taxbook_dark_mode_v1';
+  function isDark(){try{return localStorage.getItem(DARK_KEY)==='1';}catch(e){return false;}}
+  function setDark(on){
+    document.body.classList.toggle('dark-mode',!!on);
+    var b=document.getElementById('btnDarkMode');
+    if(b){
+      b.textContent=on?'☀ 밝게':'🌙 어둡게';
+      b.title=on?'밝은 화면으로 전환':'어두운 화면으로 전환';
+      b.classList.toggle('on',!!on);
+    }
+  }
+  function saveDark(on){try{localStorage.setItem(DARK_KEY,on?'1':'0');}catch(e){}}
+  function boot(){
+    setDark(isDark());
+    var b=document.getElementById('btnDarkMode');
+    if(b){b.onclick=function(){var on=!document.body.classList.contains('dark-mode');saveDark(on);setDark(on);};}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+
 </body></html>
